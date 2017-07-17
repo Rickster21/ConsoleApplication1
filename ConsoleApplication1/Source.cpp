@@ -4,14 +4,9 @@ Ricky J. Solorio
 LinkedList Merge Sort
 
 algorythems you need for Merge Sort: 
-splitList, mergeList, qnd mergeSort                 that is all! :)
+splitList, mergeList, and mergeSort                 that is all! :)
 
-
-MergeSort is a recurssion function that takes one LinkList as its paramater. The base case checks
-if the length of the Linkedlist is less than one. When the list is greater than one it gets split into two list; a Left and a Right list. 
-Both Right and Left lists get inserted into their own MergeSort Function. The original Leftlist will have to reach its base case 
-with its sub left and right sides until they all reach meet the 
-in its mergeSort before the original right can begin its mergeSort.
+This is an implementation of Merge Sort using linked list for C++. 
 
 
 ****************************/
@@ -19,9 +14,8 @@ in its mergeSort before the original right can begin its mergeSort.
 #include <iostream>
 #include <string>
 using namespace std;
-//yolo17
-// this is a implementation of Merge Sort using linked list. Starting of with SplitList
-// which is apart of the Mergesort body code
+
+
 
 struct node {
 
@@ -29,7 +23,6 @@ struct node {
 	node *link;
 
 };
-
 void makeLinkedList(node **head, int value)
 {
 	
@@ -38,37 +31,47 @@ void makeLinkedList(node **head, int value)
 	newNode->link = *head;
 	*head = newNode;
 
+}
+int EnterListSize() {
+	int listSize;
+	cout << "Enter list size: ";
+	cin >> listSize;
 
+	return listSize;
 
 }
-
-void  splitList(node *list)
+void  splitLinkedList(node *head, node** front , node** back)
 {
-	node *fast, *slow, *front, *back;
-	slow = list;
-	fast = list; // slow and fast point to the list
+	node *fast, *slow;
 
-	fast = fast->link;
-
-	if(fast->link != NULL)
+	if (head == NULL && head->link == NULL)
 	{
-		fast = fast->link;
-		while (fast->link != NULL)
-		{
-			fast = fast->link;
-			slow = slow->link;
+		*front = head;
+		*back = NULL;
 
+	}
+
+		slow = head;
+		fast = head->link;
+
+		while (fast != NULL) {
+			fast = fast->link;
+			if (fast != NULL)
+			{
+				slow = slow->link;
+				fast = fast->link;
+
+
+			}
 
 		}
 
-		back = fast;
-		slow->link = NULL;
-		front = list;
-
-	}
+			*front = head;
+			*back = slow->link;
+			slow->link = NULL;	
+	
 };
-
-void printN(node *head)
+void printLinkedList(node *head)
 {
 	node *current;
 	current = head;
@@ -80,40 +83,111 @@ void printN(node *head)
     }
 
 
+	cout << endl;
 	
+}
+node* merge(node *front, node *back) {  // NOTE: this merge will only work for sorted list not unsorted
+
+	node* head, *f = front, *b = back, *s = NULL;  // 's' will only point to the beginning of one of the sorted list once because
+	                                               // since both list are orderd both will have their lowest value
+	                                               // at the beginning. The s->link will snake through (point) the rest of the list.
+												   // Youtube explination of merge code below: https://youtu.be/j_UNYW6Ap0k
+    
+	
+	if (front != NULL && back != NULL) 
+
+		if (b->info < f->info){                     // 'b' stands for back & 'f' for front
+			s = b;
+			b = s->link;
+
+		}
+		else {
+			s = f;
+			f = s->link;
+		};
+
+		head = s;
+
+		while(b!= NULL && f!= NULL)
+		{
+			if (b->info <= f->info)
+			{
+				s->link = b;
+				s = b;
+				b = s->link;
+			}
+			else
+			{
+				s->link = f;
+				s = f;
+				f = s->link;
+			}
+		}
+		if (b == NULL)
+		{
+			s->link = f;
+
+		}
+		if (f == NULL){
+
+			s->link = b;
+		}
+
+		return head;
+
+
+}
+void MergeSort(node ** MSHead) {
+
+	node * head = *MSHead;                    // head points to the original list to be mergesorted
+	node *front = NULL, *back = NULL;         // front and back are made so the split function can split the return values of front/back
+
+	if (head == NULL || head->link == NULL) {
+
+		return;
+	}
+
+	splitLinkedList(head, &front, &back);
+	MergeSort(&front);
+	MergeSort(&back);
+	*MSHead = merge(front, back);
+
 }
 
 int main()
 {
-	node *List = NULL;
-	int listSize, numbs;
-	char answer;
+	node *List = NULL;     // initiates the Linkedlist to be created
+	int  numbs;            // numbs is a variable to insert values into linkedlist with makeLinkedlist function
+ 
+	
+	int  size = EnterListSize();  // fucntion to make code a little cleaner it returns user input for size of linkedlist
+	int count = size; 
 
-    cout << "Enter list size: ";
-	cin >> listSize;
+	cout << "Enter " << size << " numbers: \n";
+	cout << endl << endl;
 
-	for (int i = 0; i < listSize; i++)   // lets the user create the list size and data
+
+	for(int i = 0; i < size; i++)   // forloop to create the linkedlist with user input using numbs variable
 	{
-		cout << "Enter any number you want and I will split them for you..";
+		
+		cout << count << ": ";
 		cin >> numbs;
 		makeLinkedList(&List, numbs);
-
+		count--;
+		
 	};
+	cout << endl << endl;
 
-	cout << "Here is the list before I split it: ";
-	printN(List);
+	MergeSort(&List);           // mergesorts the list
+	printLinkedList(List);    // prints the reslut of the mergesorted linkedlist! :)
+
+  
 	
-	cout << "/n Do you want to go tru and split your list? Y/N /n";
-	cin >> answer;
-	if (answer == 'Y' || 'y')
-	{
-		cout << "/n/nHere is your front have you list: ";
-		splitList(List);
-		printN(List);
-	}
-	else 
-		cout << "what ever then.. :)";
-
-
-return 0;
+	return 0;
 };
+
+
+	
+
+
+
