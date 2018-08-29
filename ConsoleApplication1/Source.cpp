@@ -23,8 +23,8 @@ struct node {
 	node *link;
 
 };
-void makeLinkedList(node **head, int value)
-{
+void makeLinkedList(node **head, int value)     // this make the linked lists making the nodes in the order you input.
+{           					// so the last input will stay in the front and build the list as so
 	
 	node *newNode = new node;
 	newNode->info = value;
@@ -32,7 +32,7 @@ void makeLinkedList(node **head, int value)
 	*head = newNode;
 
 }
-int EnterListSize() {
+int EnterListSize() { 			//this is a method I made to use in another method to make my code more consice.
 	int listSize;
 	cout << "Enter list size: ";
 	cin >> listSize;
@@ -40,7 +40,7 @@ int EnterListSize() {
 	return listSize;
 
 }
-void  splitLinkedList(node *head, node** front , node** back)
+void  splitLinkedList(node *head, node** front , node** back) // the front and back are not used be
 {
 	node *fast, *slow;
 
